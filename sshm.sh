@@ -4,6 +4,7 @@
 # CONFIG
 # -------------------------------------------------
 config_path=~/.sshm_config
+default_config_path=./sshm_default_config
 
 # Helper functions - Read and write to and from the config file
 sed_escape() {
@@ -29,5 +30,5 @@ cfg_haskey() { # key
 
 # Create the config file if not exist
 if [ ! -e $config_path ]; then
-	touch $config_path
+	cp $default_config_path $config_path
 fi
