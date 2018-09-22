@@ -1,5 +1,8 @@
 #! /bin/bash	
 SSHARGS=""
+TMP_VIMRC="/tmp/.vimrc"
+VIMRC="testing_RC22"
+WRITE_FILE="echo $VIMRC > $TMP_VIMRC"
 while [ ! $# -eq 0 ]
 do
 	echo $# args
@@ -23,4 +26,4 @@ do
 done
 
 echo sshargs:\"$SSHARGS\"
-ssh $SSHARGS 
+ssh -t $SSHARGS "$WRITE_FILE; bash -l"
