@@ -3,10 +3,12 @@
 # -------------------------------------------------
 # CONFIG
 # -------------------------------------------------
-config_path=~/.sshm.conf
-default_config_path=./sshm_default.conf
+CONFIG_PATH=~/.sshm.conf
+DEFAULT_CONFIG_PATH=./sshm_default.conf
 SSHARGS=""
 TMP_VIMRC="/tmp/.vimrc"
+
+# to be taken out of the config file
 VIMRC="testing_RC22"
 WRITE_FILE="echo $VIMRC > $TMP_VIMRC"
 
@@ -21,15 +23,15 @@ cfg_write() { # key, value
 }
 
 cfg_read() { # key -> value
-	test -f "$config_path" && grep "^$(echo "$1" | sed_escape)=" "$config_path" | sed "s/^$(echo "$1" | sed_escape)=//" | tail -1
+	test -f "$CONFIG_PATH" && grep "^$(echo "$1" | sed_escape)=" "$CONFIG_PATH" | sed "s/^$(echo "$1" | sed_escape)=//" | tail -1
 }
 
 cfg_delete() { # key
-	test -f "$config_path" && sed -i "/^$(echo $1 | sed_escape).*$/d" "$config_path"
+	test -f "$CONFIG_PATH" && sed -i "/^$(echo $1 | sed_escape).*$/d" "$CONFIG_PATH"
 }
 
 cfg_haskey() { # key
-	test -f "$config_path" && grep "^$(echo "$1" | sed_escape)=" "$config_path" > /dev/null
+	test -f "$CONFIG_PATH" && grep "^$(echo "$1" | sed_escape)=" "$CONFIG_PATH" > /dev/null
 }
 
 cfg_update() { # key, value
@@ -43,8 +45,8 @@ cfg_update() { # key, value
 }
 
 # Create the config file if not exist
-if [ ! -e $config_path ]; then
-	cp $default_config_path $config_path
+if [ ! -e $CONFIG_PATH ]; then
+	cp $DEFAULT_CONFIG_PATH $CONFIG_PATH
 fi
 
 # -------------------------------------------------
@@ -70,6 +72,7 @@ do
 			exit
 			;;
 		*)
+			#the idea is that if we don't accept the command, it's probably for ssh >.>
 			echo adding to ssh command >&2
 			SSHARGS="$SSHARGS $1"
 			;;
@@ -77,5 +80,8 @@ do
 	shift
 done
 
+# testing statement
 echo sshargs:\"$SSHARGS\"
+
+#run ssh with commands to write a  temp .vimrc
 ssh -t $SSHARGS "$WRITE_FILE; bash -l"
