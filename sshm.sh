@@ -3,8 +3,8 @@
 # -------------------------------------------------
 # CONFIG
 # -------------------------------------------------
-config_path=~/.sshm_config
-default_config_path=./sshm_default_config
+config_path=~/.sshm.conf
+default_config_path=./sshm_default.conf
 
 # Helper functions - Read and write to and from the config file
 sed_escape() {
