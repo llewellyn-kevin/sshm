@@ -1,16 +1,5 @@
 #! /bin/bash
 
-# -------------------------------------------------
-# CONFIG
-# -------------------------------------------------
-CONFIG_PATH=~/.sshm.conf
-DEFAULT_CONFIG_PATH=./sshm_default.conf
-SSHARGS=""
-TMP_VIMRC="/tmp/.vimrc"
-
-# to be taken out of the config file
-VIMRC="testing_RC22"
-WRITE_FILE="echo $VIMRC > $TMP_VIMRC"
 
 # Helper functions - Read and write to and from the config file
 sed_escape() {
@@ -44,6 +33,21 @@ cfg_update() { # key, value
 	fi
 }
 
+# -------------------------------------------------
+# CONFIG
+# -------------------------------------------------
+CONFIG_PATH=~/.sshm.conf
+DEFAULT_CONFIG_PATH=./sshm_default.conf
+SSHARGS=""
+SERVER_TARGET="/tmp/"
+
+# to be taken out of the config file
+#VIMRC="testing_RC22"
+#WRITE_FILE="echo $VIMRC > $TMP_VIMRC"
+VIMRC_PATH="~/.vimrc"
+VIM_PATH="~/.vim"
+
+
 # Create the config file if not exist
 if [ ! -e $CONFIG_PATH ]; then
 	cp $DEFAULT_CONFIG_PATH $CONFIG_PATH
@@ -52,6 +56,8 @@ fi
 # -------------------------------------------------
 # Get user ARGS
 # -------------------------------------------------
+USER=""
+SERVER=""
 while [ ! $# -eq 0 ]
 do
 	echo $# args # Testing echo statements
@@ -71,6 +77,14 @@ do
 			shift
 			exit
 			;;
+		--user | -u)
+			USER="$2"
+			shift
+			;;
+		--server | -s)
+			SERVER="$2"
+			shift
+			;;
 		*)
 			#the idea is that if we don't accept the command, it's probably for ssh >.>
 			echo adding to ssh command >&2
@@ -80,8 +94,15 @@ do
 	shift
 done
 
+
+# -------------------------------------------------
+# Send files to server
+# -------------------------------------------------
+rsync -az '$VIM_PATH $VIMRC_PATH' "$USER@$SERVER:$SERVER_TARGET"
+
 # testing statement
-echo sshargs:\"$SSHARGS\"
+#echo sshargs:\"$SSHARGS\"
 
 #run ssh with commands to write a  temp .vimrc
-ssh -t $SSHARGS "$WRITE_FILE; bash -l"
+#ssh -t $SSHARGS "$WRITE_FILE; bash -l"
+ssh -t $SSHARGS
